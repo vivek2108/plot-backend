@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from api import auth
-from crud.database import Base, engine
+from app.api import auth
+from app.config.database import Base, engine
 
 app = FastAPI()
 

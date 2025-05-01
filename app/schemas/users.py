@@ -17,11 +17,11 @@ class UsersBase(BaseModel):
     )  # Switch alias and field name
 
     resource_type: Optional[str] = Field("Users", alias="resourceType")
-    username: Optional[str] = Field()
+    username: str = Field()
     full_name: Optional[str] = Field()
     email: str = Field()
     designation: str = Field()
-    is_admin: bool = Field(False)
+    role: str = Field()
 
 
 class Users(UsersBase):
@@ -39,4 +39,12 @@ class Users(UsersBase):
 
 
 class UserCredential(UsersBase):
+    password: str = Field()
+
+
+class UserLogin(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True
+    )
+    username: str = Field()
     password: str = Field()
