@@ -2,11 +2,8 @@ services:
   db:
     image: postgres:latest
     container_name: postgres-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: fastapi_app
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -18,9 +15,8 @@ services:
     build:
       context: .
     container_name: backend
-    restart: always
-    environment:
-      - DATABASE_URL=postgresql+psycopg2://postgres:password@db:5432/fastapi_app
+    env_file:
+      - .env
     depends_on:
       - db
     ports:
