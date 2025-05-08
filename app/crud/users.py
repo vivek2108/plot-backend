@@ -29,8 +29,8 @@ def create_user(db: Session, user: UsersBase, current_user: str):
         hashed_password=get_password_hash(user.password),
         designation_id=designation.id,
         role_id=role.id,
-        created_by=current_user,
-        updated_by=current_user
+        created_by=current_user["username"],
+        updated_by=current_user["username"]
     )
     db.add(db_user)
     db.commit()
@@ -49,9 +49,8 @@ def get_user(db: Session, user_id: int):
         .first()
     )
     user_dict = model_to_dict(user)
-    print(user_dict)
-    user_dict["role"] = user.role.name if user.role else None
-    user_dict["designation"] = user.designation.title if user.designation else None
+    user_dict["role"] = user.role.name
+    user_dict["designation"] = user.designation.title
     return user_dict
 
 
@@ -65,8 +64,8 @@ def get_all_user(db: Session):
     # Convert related objects to strings
     for user in users:
         user_dict = model_to_dict(user)
-        user_dict["role"] = user.role.name if user.role else None
-        user_dict["designation"] = user.designation.title if user.designation else None
+        user_dict["role"] = user.role.name
+        user_dict["designation"] = user.designation.title
         user_data.append(user_dict)
 
     return user_data
@@ -87,7 +86,13 @@ def update_user(db: Session, user_id: int, user_update: UsersBase):
 
 
 def get_user_by_username(db, username: str):
-    return db.query(UsersModel).filter(UsersModel.username == username).first()
+    user = (
+        db.query(UsersModel)
+        .options(joinedload(UsersModel.role))
+        .filter(UsersModel.username == username)
+        .first()
+    )
+    return user
 
 
 def authenticate_user(db: Session, user: UserLogin):

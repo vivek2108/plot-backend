@@ -7,6 +7,7 @@ from app.config.database import get_db
 from app.crud.users import get_user, update_user, create_user, get_all_user
 from typing import List
 from app.auth.auth import get_current_user
+from app.auth.auth import require_role
 
 
 router = APIRouter()
@@ -14,21 +15,27 @@ router = APIRouter()
 
 @router.get("/",
              response_model=List[Users],)
-def fetch_all(db: Session = Depends(get_db), current_user: UsersModel = Depends(get_current_user)):
+def fetch_all(db: Session = Depends(get_db), user: dict = Depends(require_role(["admin"]))):
     return get_all_user(db)
 
 
 @router.get("/{id}",)
             #  response_model=dict,)
 def get(id: int, db: Session = Depends(get_db), current_user: UsersModel = Depends(get_current_user)):
-    return get_user(db, id)
+    if current_user["user_id"] != id:
+        raise HTTPException(status_code=403, detail="Access denied to other user's data")
+
+    user = get_user(db, id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
 @router.post("/register",
              status_code=status.HTTP_201_CREATED,
              response_model=Users,
 )
-def create(payload: UserCredential, db: Session = Depends(get_db), current_user: UsersModel = Depends(get_current_user)):
+def create(payload: UserCredential, db: Session = Depends(get_db), current_user: dict = Depends(require_role(["admin"]))):
     return create_user(db, payload, current_user)
 
 

@@ -18,7 +18,12 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"sub": user.username}, expires_delta=timedelta(minutes=30))
+    data = {
+        "sub": user.username,
+        "role": user.role.name,
+        "user_id": user.id
+    }
+    access_token = create_access_token(data=data, expires_delta=timedelta(minutes=30))
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -28,5 +33,10 @@ def token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"sub": user.username})
-    return {"access_token": token, "token_type": "bearer"}
+    data = {
+        "sub": user.username,
+        "role": user.role.name,
+        "user_id": user.id
+    }
+    access_token = create_access_token(data=data)
+    return {"access_token": access_token, "token_type": "bearer"}

@@ -4,7 +4,6 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from app.config.database import get_db
-from app.crud.users import get_user_by_username
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -30,7 +29,20 @@ def verify_token(token: str):
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     payload = verify_token(token)
-    user = payload.get("sub") # get_user_by_username(db, payload.get("sub"))
-    if user is None:
+    username = payload.get("sub")
+    role = payload.get("role")
+    user_id = payload.get("user_id")
+    if username is None or role is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return {"username": username, "role": role, "user_id": user_id}
+
+
+def require_role(required_roles: list[str]):
+    def role_checker(user: dict = Depends(get_current_user)):
+        if user["role"] not in required_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access forbidden for role: {user['role']}"
+            )
+        return user
+    return role_checker
