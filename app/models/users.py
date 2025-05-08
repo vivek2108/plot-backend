@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy import DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import DateTime, func
+from sqlalchemy.orm import relationship
 from app.config.database import Base
-from datetime import datetime
 
 
 class Roles(Base):
@@ -9,11 +9,15 @@ class Roles(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
 
+    users = relationship("Users", back_populates="role")
+
 
 class Designations(Base):
     __tablename__ = 'designations'
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
+
+    users = relationship("Users", back_populates="designation")
 
 
 class Users(Base):
@@ -24,9 +28,12 @@ class Users(Base):
     full_name = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    designation_id = Column(Integer)
-    role_id = Column(Integer)
-    create_dt = Column(DateTime, default=datetime.now())
-    update_dt = Column(DateTime, default=datetime.now())
+    designation_id = Column(Integer, ForeignKey("designations.id"))
+    role_id = Column(Integer, ForeignKey("roles.id"))
+    create_dt = Column(DateTime, default=func.now(), nullable=False)
+    update_dt = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
     created_by = Column(String, nullable=True)
     updated_by = Column(String, nullable=True)
+
+    role = relationship("Roles", back_populates="users")
+    designation = relationship("Designations", back_populates="users")

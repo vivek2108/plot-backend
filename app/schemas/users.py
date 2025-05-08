@@ -13,7 +13,8 @@ class UsersBase(BaseModel):
     """
 
     model_config = ConfigDict(
-        populate_by_name=True
+        populate_by_name=True,
+        from_attributes=True
     )  # Switch alias and field name
 
     resource_type: Optional[str] = Field("Users", alias="resourceType")

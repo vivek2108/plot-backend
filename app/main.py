@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from app.api import auth
+from app.api import auth_router
+from app.api import users
 from app.config.database import Base, engine
 
 app = FastAPI()
@@ -15,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/users", tags=["users"])
 
 Base.metadata.create_all(bind=engine)

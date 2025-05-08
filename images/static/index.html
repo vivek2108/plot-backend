@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Plot Selector</title>
+  <style>
+    svg polygon {
+      fill: lightgray;
+      stroke: black;
+      stroke-width: 2;
+    }
+    svg polygon.selected {
+      fill: orange;
+    }
+  </style>
+</head>
+<body>
+  <h2>Select a Plot</h2>
+  <!-- Upload image form -->
+  <input type="file" id="imageUpload" accept="image/*" />
+  <button onclick="uploadImage()">Upload</button>
+  <p id="status"></p>
+  <select id="plotSelector"></select>
+  <svg id="layout" width="1600" height="1200"></svg>
+
+  <script>
+    async function uploadImage() {
+      const input = document.getElementById('imageUpload');
+      const file = input.files[0];
+      if (!file) {
+        alert("Please select an image file first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      document.getElementById('status').textContent = 'Uploading...';
+
+      try {
+        const res = await fetch('/upload/', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          document.getElementById('status').textContent = `Uploaded successfully. Found ${result.num_plots} plots.`;
+          loadPlots();  // Refresh plot data
+        } else {
+          document.getElementById('status').textContent = 'Upload failed.';
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        document.getElementById('status').textContent = 'Upload error.';
+      }
+    }
+    
+    async function loadPlots() {
+      const res = await fetch('/plots/');
+      const plots = await res.json();
+
+      const svg = document.getElementById("layout");
+      const selector = document.getElementById("plotSelector");
+
+      plots.forEach((plot, index) => {
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", plot.polygon_coordinates.map(p => p.join(",")).join(" "));
+        polygon.setAttribute("id", `plot-${index}`);
+        svg.appendChild(polygon);
+
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = plot.plot_number;
+        selector.appendChild(option);
+      });
+
+      selector.addEventListener("change", (e) => {
+        document.querySelectorAll("polygon").forEach(p => p.classList.remove("selected"));
+        const selected = document.getElementById(`plot-${e.target.value}`);
+        if (selected) selected.classList.add("selected");
+      });
+    }
+
+    loadPlots();
+  </script>
+</body>
+</html>

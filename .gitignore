@@ -11,3 +11,8 @@ venv.bak/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# images
+*.jpeg
+*.jpg
+*.png
