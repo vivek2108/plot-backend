@@ -1,6 +1,6 @@
-from app.config.database import Base, engine, SessionLocal
+from app.config.database import Base, SessionLocal, engine
 from app.crud.users import get_password_hash
-from app.models.users import Roles, Designations, Users
+from app.models.users import Designations, Roles, Users
 
 
 def init():
@@ -16,7 +16,14 @@ def init():
                 db.add(Roles(name=role_name))
 
         # Static Designations
-        designations = ["Chairman", "Executive Director", "Managing Director", "Director", "Senior Associate", "Associate"]
+        designations = [
+            "Chairman",
+            "Executive Director",
+            "Managing Director",
+            "Director",
+            "Senior Associate",
+            "Associate",
+        ]
         for title in designations:
             if not db.query(Designations).filter_by(title=title).first():
                 db.add(Designations(title=title))
@@ -32,7 +39,9 @@ def init():
                 username="admin",
                 full_name="admin user",
                 email="admin@example.com",
-                hashed_password=get_password_hash("admin123"),  # Use hash in real project
+                hashed_password=get_password_hash(
+                    "admin123"
+                ),  # Use hash in real project
                 role_id=admin_role.id,
                 designation_id=designation.id,
                 created_by="admin",
@@ -44,6 +53,7 @@ def init():
 
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     init()

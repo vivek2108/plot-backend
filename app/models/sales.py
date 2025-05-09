@@ -1,16 +1,18 @@
-from sqlalchemy import Column, Integer, String, Numeric
-from sqlalchemy import DateTime, Date
-from app.config.database import Base
 from datetime import datetime
 
+from sqlalchemy import Column, Date, DateTime, Integer, Numeric, String
+
+from app.config.database import Base
+
+
 class Sales(Base):
-    __tablename__ = 'sales'
+    __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True)
     plot_id = Column(Integer)
     associate_id = Column(Integer)
     buyer_id = Column(Integer)
-    sale_amount = Column(Numeric(15,2))
+    sale_amount = Column(Numeric(15, 2))
     payment_mode = Column(String, nullable=True)
     payment_timeframe = Column(DateTime)
     sale_date = Column(Date)

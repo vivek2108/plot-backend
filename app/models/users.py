@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy import DateTime, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
+
 from app.config.database import Base
 
 
 class Roles(Base):
-    __tablename__ = 'roles'
+    __tablename__ = "roles"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
 
@@ -13,7 +13,7 @@ class Roles(Base):
 
 
 class Designations(Base):
-    __tablename__ = 'designations'
+    __tablename__ = "designations"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
 
@@ -21,7 +21,7 @@ class Designations(Base):
 
 
 class Users(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
@@ -31,7 +31,9 @@ class Users(Base):
     designation_id = Column(Integer, ForeignKey("designations.id"))
     role_id = Column(Integer, ForeignKey("roles.id"))
     create_dt = Column(DateTime, default=func.now(), nullable=False)
-    update_dt = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    update_dt = Column(
+        DateTime, default=func.now(), onupdate=func.now(), nullable=False
+    )
     created_by = Column(String, nullable=True)
     updated_by = Column(String, nullable=True)
 

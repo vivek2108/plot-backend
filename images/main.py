@@ -1,12 +1,11 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
-import uvicorn
+import os
+
 import cv2
 import pytesseract
-import numpy as np
-import json
-import os
+import uvicorn
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -15,6 +14,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Store extracted plots in memory for now
 plot_data = []
+
 
 @app.post("/upload/")
 async def upload_image(file: UploadFile = File(...)):
@@ -52,28 +52,33 @@ async def upload_image(file: UploadFile = File(...)):
         if w < 50 or h < 50:
             continue
 
-        roi = image[y:y+h, x:x+w]
+        roi = image[y : y + h, x : x + w]
         text = pytesseract.image_to_string(roi, config="--psm 6")
 
-        plots.append({
-            "plot_number": f"Plot_{i}",
-            "raw_text": text.strip(),
-            "polygon_coordinates": polygon[:, 0].tolist()
-        })
+        plots.append(
+            {
+                "plot_number": f"Plot_{i}",
+                "raw_text": text.strip(),
+                "polygon_coordinates": polygon[:, 0].tolist(),
+            }
+        )
 
     global plot_data
     plot_data = plots
 
     return {"status": "success", "num_plots": len(plots)}
 
+
 @app.get("/plots/")
 def get_plots():
     return JSONResponse(content=plot_data)
+
 
 @app.get("/")
 def get_frontend():
     with open("static/index.html") as f:
         return HTMLResponse(f.read())
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

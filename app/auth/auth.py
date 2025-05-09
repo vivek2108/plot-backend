@@ -1,9 +1,15 @@
-import jwt
 from datetime import datetime, timedelta, timezone
+
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+
+from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
+
+# from functools import wraps
+
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -27,22 +33,40 @@ def verify_token(token: str):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     payload = verify_token(token)
     username = payload.get("sub")
     role = payload.get("role")
     user_id = payload.get("user_id")
     if username is None or role is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"username": username, "role": role, "user_id": user_id}
+    return CurrentUser(username=username, role=role, user_id=user_id)
 
 
-def require_role(required_roles: list[str]):
-    def role_checker(user: dict = Depends(get_current_user)):
-        if user["role"] not in required_roles:
+def require_role(allowed_roles: list[str]):
+    def wrapper(current_user: CurrentUser = Depends(get_current_user)):
+        if current_user.role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Access forbidden for role: {user['role']}"
+                detail=f"Access forbidden for role: {current_user.role}",
             )
-        return user
-    return role_checker
+        return current_user
+
+    return wrapper
+
+
+# def require_auth(func):
+#     @wraps(func)
+#     def wrapper(*args,
+#                 db: Session = Depends(get_db),
+#                 current_user: CurrentUser = Depends(get_current_user),
+#                 **kwargs):
+#         if not current_user:
+#             raise HTTPException(
+#                 status_code=status.HTTP_401_UNAUTHORIZED,
+#                 detail="Not authenticated"
+#             )
+#         return func(*args, db=db, current_user=current_user, **kwargs)
+#     return wrapper

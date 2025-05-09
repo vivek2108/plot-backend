@@ -1,10 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy import DateTime
-from app.config.database import Base
 from datetime import datetime
 
+from sqlalchemy import Column, DateTime, Integer, String
+
+from app.config.database import Base
+
+
 class Buyers(Base):
-    __tablename__ = 'buyers'
+    __tablename__ = "buyers"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=True)

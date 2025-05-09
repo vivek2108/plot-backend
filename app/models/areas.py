@@ -1,10 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy import DateTime
+from sqlalchemy import Column, Integer, String
+
 from app.config.database import Base
-from datetime import datetime
+
 
 class Areas(Base):
-    __tablename__ = 'areas'
+    __tablename__ = "areas"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=True)

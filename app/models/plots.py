@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import DateTime
-from app.config.database import Base
 from datetime import datetime
+
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.dialects.postgresql import JSONB
+
+from app.config.database import Base
 
 
 class Plots(Base):
-    __tablename__ = 'plots'
+    __tablename__ = "plots"
 
     id = Column(Integer, primary_key=True, index=True)
     plot_number = Column(Integer)
