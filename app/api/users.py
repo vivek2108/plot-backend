@@ -12,7 +12,12 @@ from app.schemas.users import UserCredential, Users
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Users])
+@router.get(
+    "/",
+    response_model=List[Users],
+    summary="Fetch all users",
+    description="Fetch a list of all users. This endpoint is only accessible by users with the 'admin' role.",
+)
 def fetch_all(
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(require_role(["admin"])),
@@ -31,7 +36,12 @@ def fetch_all(
     return get_all_user(db)
 
 
-@router.get("/{id}", response_model=Users)
+@router.get(
+    "/{id}",
+    response_model=Users,
+    summary="Get a specific user by ID",
+    description="Fetch the details of a specific user by their ID. Users can only access their own data.",
+)
 def get(
     id: int,
     db: Session = Depends(get_db),
@@ -63,7 +73,13 @@ def get(
     return user
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=Users)
+@router.post(
+    "/register",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Users,
+    summary="Register a new user",
+    description="Register a new user. This endpoint is only accessible to users with the 'admin' role.",
+)
 def create(
     payload: UserCredential,
     db: Session = Depends(get_db),
@@ -84,7 +100,12 @@ def create(
     return create_user(db, payload, current_user)
 
 
-@router.put("/{id}", response_model=Users)
+@router.put(
+    "/{id}",
+    response_model=Users,
+    summary="Update user information",
+    description="Update user information. Users can update their own data, or admins can update any user.",
+)
 def update(
     id: int,
     payload: UserCredential,
