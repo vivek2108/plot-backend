@@ -1,4 +1,4 @@
-"""Schema for Job Family."""
+"""Schema for users."""
 
 from datetime import datetime
 from typing import Optional

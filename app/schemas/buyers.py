@@ -1,4 +1,4 @@
-"""Schema for Job Family."""
+"""Schema for buyers."""
 
 from datetime import datetime
 from typing import Optional
@@ -24,7 +24,7 @@ class Buyers(BuyersBase):
     """Base class to handle http request
 
     Args:
-        UsersBase: Inherits from the UsersBase
+        BuyersBase: Inherits from the BuyersBase
     """
 
     id: int = Field()
