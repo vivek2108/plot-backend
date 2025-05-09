@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import func
+from sqlalchemy.orm import Session
+
 from app.auth.currentuser import CurrentUser
 from app.models.buyers import Buyers as BuyersModel
 from app.schemas.buyers import BuyersBase
@@ -39,7 +40,11 @@ def get_buyer(db: Session, buyer_id: int) -> BuyersModel | None:
     Returns:
         BuyersModel | None: Buyer object if found, else None.
     """
-    return db.query(BuyersModel).filter(BuyersModel.id == buyer_id, BuyersModel.deleted_at == None).first()
+    return (
+        db.query(BuyersModel)
+        .filter(BuyersModel.id == buyer_id, BuyersModel.deleted_at == None)
+        .first()
+    )
 
 
 def get_all_buyers(
@@ -57,12 +62,16 @@ def get_all_buyers(
     Returns:
         list[BuyersModel]: List of buyers with applied filters and pagination.
     """
-    query = db.query(BuyersModel).filter(BuyersModel.deleted_at == None)  # Exclude soft-deleted records
-    
+    query = db.query(BuyersModel).filter(
+        BuyersModel.deleted_at == None
+    )  # Exclude soft-deleted records
+
     # Apply filters if provided
     if filters:
         for field, value in filters.items():
-            query = query.filter(getattr(BuyersModel, field).ilike(f"%{value}%"))  # Case-insensitive search
+            query = query.filter(
+                getattr(BuyersModel, field).ilike(f"%{value}%")
+            )  # Case-insensitive search
 
     # Apply pagination
     query = query.offset(skip).limit(limit)
@@ -104,7 +113,9 @@ def update_buyer(
     return buyer
 
 
-def soft_delete_buyer(db: Session, buyer_id: int, current_user: CurrentUser) -> BuyersModel | None:
+def soft_delete_buyer(
+    db: Session, buyer_id: int, current_user: CurrentUser
+) -> BuyersModel | None:
     """
     Soft delete a buyer by setting the `deleted_at` field to the current time.
 

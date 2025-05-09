@@ -53,7 +53,9 @@ def get(
         Users: User record.
     """
     if current_user.user_id != id:
-        raise HTTPException(status_code=403, detail="Access denied to other user's data")
+        raise HTTPException(
+            status_code=403, detail="Access denied to other user's data"
+        )
 
     user = get_user(db, id)
     if not user:

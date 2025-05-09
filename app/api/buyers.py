@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from app.auth.auth import get_current_user, require_role
 from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
-from app.crud.buyers import create_buyer, get_all_buyers, get_buyer, update_buyer, soft_delete_buyer
+from app.crud.buyers import (create_buyer, get_all_buyers, get_buyer,
+                             soft_delete_buyer, update_buyer)
 from app.schemas.buyers import Buyers, BuyersBase
 
 router = APIRouter()

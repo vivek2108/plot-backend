@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey
 
 from app.config.database import Base
 
@@ -27,18 +26,21 @@ class Plots(Base):
         created_by (str | None): User who created the plot record.
         updated_by (str | None): User who last updated the plot record.
     """
+
     __tablename__ = "plots"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     plot_number: Mapped[int] = mapped_column()
-    area_id: Mapped[int] = mapped_column(Integer, ForeignKey('areas.id'))
+    area_id: Mapped[int] = mapped_column(Integer, ForeignKey("areas.id"))
     dimensions: Mapped[str | None] = mapped_column(String, nullable=True)
     status: Mapped[str | None] = mapped_column(String, nullable=True)
     assigned_to: Mapped[str | None] = mapped_column(String, nullable=True)
-    image_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('images.id'))
+    image_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("images.id"))
     svg_path_id: Mapped[str | None] = mapped_column(String, nullable=True)
     ocr_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    update_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    update_dt: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)

@@ -16,7 +16,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
-def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+    data: Dict[str, Any], expires_delta: Optional[timedelta] = None
+) -> str:
     """
     Create a JWT access token with an expiration.
 
@@ -28,7 +30,9 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
         str: Encoded JWT token.
     """
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.now(timezone.utc) + (
+        expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -91,6 +95,7 @@ def require_role(allowed_roles: List[str]) -> Callable[[CurrentUser], CurrentUse
     Returns:
         Callable[[CurrentUser], CurrentUser]: A FastAPI dependency function.
     """
+
     def wrapper(current_user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
         if current_user.role not in allowed_roles:
             raise HTTPException(

@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlalchemy import DateTime, Integer, String, func
+
+from sqlalchemy import DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
@@ -21,6 +22,7 @@ class Buyers(Base):
         created_by (str | None): Username who created the record.
         updated_by (str | None): Username who last updated the record.
     """
+
     __tablename__ = "buyers"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -30,6 +32,8 @@ class Buyers(Base):
     id_proof_path: Mapped[str | None] = mapped_column(String, nullable=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    update_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    update_dt: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)

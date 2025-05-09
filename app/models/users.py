@@ -1,7 +1,7 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import Mapped, mapped_column
+
+from sqlalchemy import DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config.database import Base
 
@@ -17,6 +17,7 @@ class Roles(Base):
     Relationships:
         users (List[Users]): List of users associated with this role.
     """
+
     __tablename__ = "roles"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -37,6 +38,7 @@ class Designations(Base):
     Relationships:
         users (List[Users]): List of users associated with this designation.
     """
+
     __tablename__ = "designations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -67,6 +69,7 @@ class Users(Base):
         role (Roles): The role assigned to the user.
         designation (Designations): The designation assigned to the user.
     """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -76,8 +79,12 @@ class Users(Base):
     hashed_password: Mapped[str] = mapped_column(String)
     designation_id: Mapped[int] = mapped_column(Integer, ForeignKey("designations.id"))
     role_id: Mapped[int] = mapped_column(Integer, ForeignKey("roles.id"))
-    create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
-    update_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    create_dt: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), nullable=False
+    )
+    update_dt: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), onupdate=func.now(), nullable=False
+    )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
 

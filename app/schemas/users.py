@@ -17,15 +17,18 @@ class UsersBase(BaseModel):
         email (str): The email address of the user (required).
         designation (str): The designation or job title of the user (required).
         role (str): The role of the user, e.g., 'Admin', 'User' (required).
-        
+
     Configuration:
         - Switches alias and field name with `populate_by_name=True, from_attributes=True`.
     """
+
     model_config = ConfigDict(
         populate_by_name=True, from_attributes=True
     )  # Switch alias and field name
 
-    resource_type: Optional[str] = Field("Users", alias="resourceType", description="Type of the resource.")
+    resource_type: Optional[str] = Field(
+        "Users", alias="resourceType", description="Type of the resource."
+    )
     username: str = Field(..., description="The unique username of the user.")
     full_name: Optional[str] = Field(None, description="The full name of the user.")
     email: str = Field(..., description="The unique email address of the user.")
@@ -49,11 +52,24 @@ class Users(UsersBase):
     Args:
         UsersBase: Inherits common fields from the `UsersBase` schema.
     """
+
     id: int = Field(..., description="Unique identifier for the user.")
-    created_by: Optional[str] = Field(None, alias="createdBy", description="Username of the user who created this record.")
-    updated_by: Optional[str] = Field(None, alias="updatedBy", description="Username of the user who last updated this record.")
-    create_dt: Optional[datetime] = Field(None, alias="createDate", description="Timestamp of record creation.")
-    update_dt: Optional[datetime] = Field(None, alias="updateDate", description="Timestamp of record last update.")
+    created_by: Optional[str] = Field(
+        None,
+        alias="createdBy",
+        description="Username of the user who created this record.",
+    )
+    updated_by: Optional[str] = Field(
+        None,
+        alias="updatedBy",
+        description="Username of the user who last updated this record.",
+    )
+    create_dt: Optional[datetime] = Field(
+        None, alias="createDate", description="Timestamp of record creation."
+    )
+    update_dt: Optional[datetime] = Field(
+        None, alias="updateDate", description="Timestamp of record last update."
+    )
 
 
 class UserCredential(UsersBase):
@@ -65,6 +81,7 @@ class UserCredential(UsersBase):
     Attributes:
         password (str): The password for the user (required).
     """
+
     password: str = Field(..., description="The password for the user.")
 
 
@@ -75,10 +92,11 @@ class UserLogin(BaseModel):
     Attributes:
         username (str): The username of the user (required).
         password (str): The password of the user (required).
-        
+
     Configuration:
         - Switches alias and field name with `populate_by_name=True`.
     """
+
     model_config = ConfigDict(populate_by_name=True)
 
     username: str = Field(..., description="The username of the user.")

@@ -1,7 +1,9 @@
 import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+
 from app.api import auth_router, buyers, users
 from app.config.database import Base, engine
 

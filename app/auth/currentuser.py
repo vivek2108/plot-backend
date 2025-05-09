@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class CurrentUser(BaseModel):
     """
     Represents the authenticated user's identity and role.

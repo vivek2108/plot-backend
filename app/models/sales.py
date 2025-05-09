@@ -1,7 +1,8 @@
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
-from sqlalchemy import ForeignKey
-from sqlalchemy import Date, DateTime, Integer, Numeric, String, func
+
+from sqlalchemy import (Date, DateTime, ForeignKey, Integer, Numeric, String,
+                        func)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config.database import Base
@@ -25,18 +26,21 @@ class Sales(Base):
         created_by (str | None): The user who created the sale record.
         updated_by (str | None): The user who last updated the sale record.
     """
+
     __tablename__ = "sales"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    plot_id: Mapped[int] = mapped_column(Integer, ForeignKey('plots.id'))
-    associate_id: Mapped[int] = mapped_column(Integer, ForeignKey('associates.id'))
-    buyer_id: Mapped[int] = mapped_column(Integer, ForeignKey('buyers.id'))
+    plot_id: Mapped[int] = mapped_column(Integer, ForeignKey("plots.id"))
+    associate_id: Mapped[int] = mapped_column(Integer, ForeignKey("associates.id"))
+    buyer_id: Mapped[int] = mapped_column(Integer, ForeignKey("buyers.id"))
     sale_amount: Mapped[Decimal] = mapped_column(Numeric(15, 2))
     payment_mode: Mapped[str | None] = mapped_column(String, nullable=True)
     payment_timeframe: Mapped[datetime] = mapped_column(DateTime)
     sale_date: Mapped[date] = mapped_column(Date)
     create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    update_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    update_dt: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
 

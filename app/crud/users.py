@@ -1,12 +1,12 @@
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session, joinedload
-from fastapi import HTTPException
+
 from app.auth.currentuser import CurrentUser
 from app.models.users import Designations as DesignationsModel
 from app.models.users import Roles as RolesModel
 from app.models.users import Users as UsersModel
 from app.schemas.users import UserLogin, UsersBase
-
 
 # Initialize password hashing context using bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -152,7 +152,9 @@ def get_all_user(db: Session) -> list:
     return user_data
 
 
-def update_user(db: Session, user_id: int, user_update: UsersBase, current_user: CurrentUser) -> dict:
+def update_user(
+    db: Session, user_id: int, user_update: UsersBase, current_user: CurrentUser
+) -> dict:
     """
     Updates an existing user's information.
 

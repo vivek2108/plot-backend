@@ -56,7 +56,9 @@ def token(
     """
     user = authenticate_user(db, form_data)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+        )
 
     data = {"sub": user.username, "role": user.role.name, "user_id": user.id}
     access_token = create_access_token(data=data)

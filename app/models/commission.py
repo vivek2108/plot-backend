@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import Date, Integer, Numeric
+from sqlalchemy import Date, Numeric
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
@@ -19,6 +19,7 @@ class Commission(Base):
         commission_amount (Decimal): Calculated commission amount.
         calculated_on (date): Date when the commission was calculated.
     """
+
     __tablename__ = "commission"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

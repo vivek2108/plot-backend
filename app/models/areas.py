@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
@@ -14,6 +14,7 @@ class Areas(Base):
         city (str | None): City in which the area is located (nullable).
         state (str | None): State in which the area is located (nullable).
     """
+
     __tablename__ = "areas"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

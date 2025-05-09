@@ -16,7 +16,9 @@ DB_HOST = os.getenv("POSTGRES_HOST", "db")
 DB_PORT = os.getenv("POSTGRES_PORT", "5432")
 
 # SQLAlchemy database URL
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
 
 # Create SQLAlchemy engine
 engine = create_engine(DATABASE_URL, echo=True)
@@ -30,6 +32,7 @@ class Base(DeclarativeBase):
     Base class for SQLAlchemy models.
     All models should inherit from this.
     """
+
     pass
 
 

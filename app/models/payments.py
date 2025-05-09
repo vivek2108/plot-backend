@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import Date, Integer, Numeric, String
+from sqlalchemy import Date, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
@@ -19,6 +19,7 @@ class Payments(Base):
         payment_mode (str | None): Method of payment (e.g., 'Cash', 'Bank Transfer').
         remaining_balance (Decimal): Remaining balance after this payment.
     """
+
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
