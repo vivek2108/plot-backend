@@ -1,19 +1,35 @@
 from datetime import datetime
-
-from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
 
 
 class Buyers(Base):
+    """
+    Represents a buyer in the system.
+
+    Attributes:
+        id (int): Primary key for the buyer.
+        name (str | None): Name of the buyer.
+        contact (str | None): Contact information.
+        address (str | None): Address of the buyer.
+        id_proof_path (str | None): File path to the buyer's ID proof.
+        deleted_at (datetime | None): Timestamp for soft deletion.
+        create_dt (datetime): Timestamp when the record was created.
+        update_dt (datetime): Timestamp when the record was last updated.
+        created_by (str | None): Username who created the record.
+        updated_by (str | None): Username who last updated the record.
+    """
     __tablename__ = "buyers"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=True)
-    contact = Column(String, nullable=True)
-    address = Column(String, nullable=True)
-    id_proof_path = Column(String, nullable=True)
-    create_dt = Column(DateTime, default=datetime.now())
-    update_dt = Column(DateTime, default=datetime.now())
-    created_by = Column(String, nullable=True)
-    updated_by = Column(String, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str | None] = mapped_column(String, nullable=True)
+    contact: Mapped[str | None] = mapped_column(String, nullable=True)
+    address: Mapped[str | None] = mapped_column(String, nullable=True)
+    id_proof_path: Mapped[str | None] = mapped_column(String, nullable=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    update_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    created_by: Mapped[str | None] = mapped_column(String, nullable=True)
+    updated_by: Mapped[str | None] = mapped_column(String, nullable=True)

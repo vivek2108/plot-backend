@@ -1,12 +1,22 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import String, Integer
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config.database import Base
 
 
 class Areas(Base):
+    """
+    Represents a geographic area within a city and state.
+
+    Attributes:
+        id (int): Primary key, auto-incremented.
+        name (str | None): Name of the area (nullable).
+        city (str | None): City in which the area is located (nullable).
+        state (str | None): State in which the area is located (nullable).
+    """
     __tablename__ = "areas"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=True)
-    city = Column(String, nullable=True)
-    state = Column(String, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str | None] = mapped_column(String, nullable=True)
+    city: Mapped[str | None] = mapped_column(String, nullable=True)
+    state: Mapped[str | None] = mapped_column(String, nullable=True)
