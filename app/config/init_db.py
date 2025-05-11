@@ -2,6 +2,9 @@ from app.config.database import Base, SessionLocal, engine
 from app.crud.users import get_password_hash
 from app.models.users import Designations, Roles, Users
 
+from app.models.areas import Areas
+from app.models.images import Images
+from app.models.plots import Plots
 
 def init() -> None:
     """

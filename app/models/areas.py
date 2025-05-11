@@ -1,5 +1,6 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship
 
 from app.config.database import Base
 
@@ -21,3 +22,5 @@ class Areas(Base):
     name: Mapped[str | None] = mapped_column(String, nullable=True)
     city: Mapped[str | None] = mapped_column(String, nullable=True)
     state: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    plots = relationship("Plots", back_populates="area")

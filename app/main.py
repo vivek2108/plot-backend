@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from app.api import auth_router, buyers, users
+from app.api import auth_router, buyers, users, plots
 from app.config.database import Base, engine
 
 # Setting up logging
@@ -32,6 +32,7 @@ app.add_middleware(
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(buyers.router, prefix="/buyers", tags=["buyers"])
+app.include_router(plots.router, prefix="/plots", tags=["plots"])
 
 # Create all database tables defined in the Base class
 Base.metadata.create_all(bind=engine)

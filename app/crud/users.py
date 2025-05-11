@@ -234,4 +234,4 @@ def authenticate_user(db: Session, user: UserLogin) -> dict:
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         return None
 
-    return model_to_dict(db_user)
+    return db_user # model_to_dict(db_user)

@@ -3,9 +3,11 @@ from datetime import datetime
 from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship
 
 from app.config.database import Base
-
+from app.models.areas import Areas
+from app.models.images import Images
 
 class Plots(Base):
     """
@@ -44,3 +46,6 @@ class Plots(Base):
     )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    area = relationship("Areas", back_populates="plots")
+
