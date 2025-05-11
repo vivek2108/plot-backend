@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.config.database import get_db
-from app.auth.auth import get_current_user
+from app.auth.auth import get_current_user, require_role
 from app.schemas.plots import PlotCreate, PlotUpdate, Plot
 from app.crud.plots import create_plot, get_plot, get_all_plots, update_plot, delete_plot
 from app.auth.currentuser import CurrentUser
@@ -14,7 +14,7 @@ router = APIRouter()
 def create(
     plot_data: PlotCreate,
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ):
     """
     Create a new plot.
@@ -84,7 +84,7 @@ def update(
     plot_id: int,
     plot_data: PlotUpdate,
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ):
     """
     Update an existing plot.
@@ -109,7 +109,7 @@ def update(
 def delete(
     plot_id: int,
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ):
     """
     Soft delete a plot by ID.
