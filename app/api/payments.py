@@ -7,85 +7,147 @@ from app.auth.auth import get_current_user, require_role
 from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
 from app.core.logger import get_logger
-from app.crud.payments import (create_payment, soft_delete_payments,
-                               get_all_payments, get_payment,
-                               read_deleted_payments, update_payment)
+from app.crud.payments import (
+    create_payment,
+    get_all_payments,
+    get_payment,
+    read_deleted_payments,
+    soft_delete_payments,
+    update_payment,
+)
 from app.schemas.payments import PaymentBase, PaymentOut, PaymentUpdate
 
 logger = get_logger(__name__)
-
 router = APIRouter()
 
 
-@router.get("/", response_model=List[PaymentOut])
-def get_payments(
-    db: Session = Depends(get_db),
+@router.get("/", response_model=List[PaymentOut], summary="List Payments")
+def list_payments(
     skip: int = 0,
     limit: int = 100,
-    # filters: dict = {},
+    db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ):
-    return get_all_payments(db, skip=skip, limit=limit)
+    """
+    Retrieve a list of active (non-deleted) payments.
+
+    - Requires `admin` or `manager` role.
+    - Supports pagination via `skip` and `limit`.
+    """
+    payments = get_all_payments(db, skip=skip, limit=limit)
+    logger.info(f"Retrieved {len(payments)} payments for user {current_user.email}")
+    return payments
 
 
-@router.get("/{payment_id}", response_model=PaymentOut)
-def get(
+@router.get("/{payment_id}", response_model=PaymentOut, summary="Get Payment by ID")
+def retrieve_payment(
     payment_id: int,
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
-    db_payment = get_payment(db, payment_id)
-    if not db_payment:
+    """
+    Retrieve a specific payment by its ID.
+
+    - Accessible by any authenticated user.
+    """
+    payment = get_payment(db, payment_id)
+    if not payment:
+        logger.warning(
+            f"Payment ID {payment_id} not found by user {current_user.email}"
+        )
         raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
 
-    return db_payment
 
-
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=PaymentOut)
-def create(
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=PaymentOut,
+    summary="Create Payment",
+)
+def create_new_payment(
     payment: PaymentBase,
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
-    return create_payment(db, payment, current_user)
+    """
+    Create a new payment entry.
+
+    - Accessible by any authenticated user.
+    """
+    new_payment = create_payment(db, payment, current_user)
+    logger.info(f"Payment created by user {current_user.email}")
+    return new_payment
 
 
-@router.put("/{payment_id}", response_model=PaymentOut)
-def update(
+@router.put("/{payment_id}", response_model=PaymentOut, summary="Update Payment")
+def update_existing_payment(
     payment_id: int,
     payment: PaymentUpdate,
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
-    db_payment = update_payment(db, payment_id, payment, current_user)
-    if not db_payment:
+    """
+    Update an existing payment by ID.
+
+    - Accessible by any authenticated user.
+    - Returns 404 if payment does not exist.
+    """
+    updated = update_payment(db, payment_id, payment, current_user)
+    if not updated:
+        logger.warning(f"Attempted to update non-existent payment ID {payment_id}")
         raise HTTPException(status_code=404, detail="Payment not found")
-    return db_payment
+    return updated
 
 
-@router.delete("/{payment_id}", response_model=PaymentOut)
-def delete_payment(
+@router.delete(
+    "/{payment_id}", response_model=PaymentOut, summary="Soft Delete Payment"
+)
+def soft_delete_payment(
     payment_id: int,
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
-    db_payment = soft_delete_payments(db, payment_id, current_user)
-    if not db_payment:
+    """
+    Soft delete a payment (mark as deleted but not removed from DB).
+
+    - Accessible by any authenticated user.
+    - Returns 404 if payment does not exist.
+    """
+    deleted = soft_delete_payments(db, payment_id, current_user)
+    if not deleted:
+        logger.warning(f"Attempted to delete non-existent payment ID {payment_id}")
         raise HTTPException(status_code=404, detail="Payment not found")
-    return db_payment
+    return deleted
 
 
-@router.get("/deleted/", response_model=List[PaymentOut])
-def read_soft_deleted_payments(db: Session = Depends(get_db)):
-    return read_deleted_payments(db)
+@router.get(
+    "/deleted/", response_model=List[PaymentOut], summary="List Soft Deleted Payments"
+)
+def list_deleted_payments(
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(require_role(["admin"])),
+):
+    """
+    Retrieve a list of soft-deleted payments.
+
+    - Requires `admin` role.
+    """
+    deleted_payments = read_deleted_payments(db)
+    logger.info(
+        f"User {current_user.email} viewed {len(deleted_payments)} deleted payments"
+    )
+    return deleted_payments
 
 
 # from fastapi import BackgroundTasks
 
-# def send_sms_background(background_tasks: BackgroundTasks, msg: str, phone_number: str):
+# def send_sms_background(background_tasks: BackgroundTasks,
+#  msg: str, phone_number: str):
 #     background_tasks.add_task(send_sms, msg, phone_number)
 
-# def create_payment_upd(db: Session, payment: PaymentCreate, background_tasks: BackgroundTasks):
+# def create_payment_upd(db: Session, payment: PaymentCreate,
+#  background_tasks: BackgroundTasks):
 #     db_payment = Payments(**payment.dict())
 #     db.add(db_payment)
 #     db.commit()

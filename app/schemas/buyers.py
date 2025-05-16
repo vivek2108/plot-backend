@@ -18,7 +18,8 @@ class BuyersBase(BaseModel):
         id_proof_path (Optional[str]): Path to the buyer's ID proof (optional).
 
     Configuration:
-        - Switches alias and field name with `populate_by_name=True, from_attributes=True`.
+        - Switches alias and field name with
+        `populate_by_name=True, from_attributes=True`.
     """
 
     model_config = ConfigDict(
@@ -44,10 +45,13 @@ class Buyers(BuyersBase):
 
     Attributes:
         id (int): The unique identifier for the buyer.
-        created_by (Optional[str]): The username of the user who created this record (optional).
-        updated_by (Optional[str]): The username of the user who last updated this record (optional).
+        created_by (Optional[str]): The username of the user who created this
+        record (optional).
+        updated_by (Optional[str]): The username of the user who last updated this
+        record (optional).
         create_dt (Optional[datetime]): Timestamp of when the buyer was created.
-        update_dt (Optional[datetime]): Timestamp of when the buyer's record was last updated.
+        update_dt (Optional[datetime]): Timestamp of when the buyer's record was
+        last updated.
 
     Args:
         BuyersBase: Inherits common fields from the `BuyersBase` schema.

@@ -16,7 +16,8 @@ router = APIRouter()
     "/",
     response_model=List[Users],
     summary="Fetch all users",
-    description="Fetch a list of all users. This endpoint is only accessible by users with the 'admin' role.",
+    description="Fetch a list of all users. This endpoint is only accessible "
+    "by users with the 'admin' role.",
 )
 def fetch_all(
     db: Session = Depends(get_db),
@@ -40,7 +41,8 @@ def fetch_all(
     "/{id}",
     response_model=Users,
     summary="Get a specific user by ID",
-    description="Fetch the details of a specific user by their ID. Users can only access their own data.",
+    description="Fetch the details of a specific user by their ID. "
+    "Users can only access their own data.",
 )
 def get(
     id: int,
@@ -78,7 +80,8 @@ def get(
     status_code=status.HTTP_201_CREATED,
     response_model=Users,
     summary="Register a new user",
-    description="Register a new user. This endpoint is only accessible to users with the 'admin' role.",
+    description="Register a new user. This endpoint is only accessible "
+    "to users with the 'admin' role.",
 )
 def create(
     payload: UserCredential,
@@ -104,7 +107,8 @@ def create(
     "/{id}",
     response_model=Users,
     summary="Update user information",
-    description="Update user information. Users can update their own data, or admins can update any user.",
+    description="Update user information. Users can update their own data, "
+    "or admins can update any user.",
 )
 def update(
     id: int,

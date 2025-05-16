@@ -7,8 +7,13 @@ from app.auth.auth import get_current_user, require_role
 from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
 from app.core.logger import get_logger
-from app.crud.buyers import (create_buyer, get_all_buyers, get_buyer,
-                             soft_delete_buyer, update_buyer)
+from app.crud.buyers import (
+    create_buyer,
+    get_all_buyers,
+    get_buyer,
+    soft_delete_buyer,
+    update_buyer,
+)
 from app.schemas.buyers import Buyers, BuyersBase
 
 logger = get_logger(__name__)
@@ -20,7 +25,8 @@ router = APIRouter()
     "/",
     response_model=List[Buyers],
     summary="Fetch all buyers",
-    description="Fetch a paginated list of all buyers from the database. Access is restricted to users with 'admin' or 'manager' roles.",
+    description="Fetch a paginated list of all buyers from the database. "
+    "Access is restricted to users with 'admin' or 'manager' roles.",
 )
 def fetch_all(
     db: Session = Depends(get_db),
@@ -49,7 +55,8 @@ def fetch_all(
     "/{id}",
     response_model=Buyers,
     summary="Retrieve a buyer by ID",
-    description="Fetch the details of a specific buyer using their ID. Authenticated access required.",
+    description="Fetch the details of a specific buyer using their ID. "
+    "Authenticated access required.",
 )
 def get(
     id: int,
@@ -77,7 +84,8 @@ def get(
     status_code=status.HTTP_201_CREATED,
     response_model=Buyers,
     summary="Create a new buyer",
-    description="Create a new buyer record. Only accessible to users with 'admin' or 'manager' roles.",
+    description="Create a new buyer record. Only accessible to users with "
+    "'admin' or 'manager' roles.",
 )
 def create(
     payload: BuyersBase,

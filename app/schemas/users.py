@@ -19,7 +19,8 @@ class UsersBase(BaseModel):
         role (str): The role of the user, e.g., 'Admin', 'User' (required).
 
     Configuration:
-        - Switches alias and field name with `populate_by_name=True, from_attributes=True`.
+        - Switches alias and field name with
+        `populate_by_name=True, from_attributes=True`.
     """
 
     model_config = ConfigDict(
@@ -44,10 +45,13 @@ class Users(UsersBase):
 
     Attributes:
         id (int): The unique identifier for the user.
-        created_by (Optional[str]): The username of the user who created this record (optional).
-        updated_by (Optional[str]): The username of the user who last updated this record (optional).
+        created_by (Optional[str]): The username of the user who created this
+        record (optional).
+        updated_by (Optional[str]): The username of the user who last updated
+        this record (optional).
         create_dt (Optional[datetime]): Timestamp when the user was created.
-        update_dt (Optional[datetime]): Timestamp when the user's record was last updated.
+        update_dt (Optional[datetime]): Timestamp when the user's record was
+        last updated.
 
     Args:
         UsersBase: Inherits common fields from the `UsersBase` schema.

@@ -17,7 +17,8 @@ router = APIRouter()
     "/login",
     response_model=Dict[str, str],
     summary="Authenticate user and return JWT token",
-    description="Authenticate the user using their username and password in JSON format. Returns a JWT access token if authentication is successful.",
+    description="Authenticate the user using their username and password in JSON "
+    "format. Returns a JWT access token if authentication is successful.",
 )
 def login(payload: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
     """
@@ -46,7 +47,8 @@ def login(payload: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
     "/token",
     response_model=Dict[str, str],
     summary="OAuth2-compatible token generation",
-    description="OAuth2-compatible login endpoint that uses form-encoded credentials for the Swagger UI. Returns a JWT access token if authentication is successful.",
+    description="OAuth2-compatible login endpoint that uses form-encoded credentials "
+    "for the Swagger UI. Returns a JWT access token if authentication is successful.",
 )
 def token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)

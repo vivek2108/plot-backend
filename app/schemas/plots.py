@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
-from typing import Dict, Optional
 from decimal import Decimal
+from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 

@@ -6,8 +6,13 @@ from sqlalchemy.orm import Session
 from app.auth.auth import get_current_user, require_role
 from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
-from app.crud.plots import (create_plot, delete_plot, get_all_plots, get_plot,
-                            update_plot)
+from app.crud.plots import (
+    create_plot,
+    delete_plot,
+    get_all_plots,
+    get_plot,
+    update_plot,
+)
 from app.schemas.plots import Plot, PlotBase, PlotUpdate
 
 router = APIRouter()

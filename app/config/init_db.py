@@ -113,7 +113,7 @@ def load_csv_to_db():
 
         # Insert Associates
         associates_df["hashed_password"] = get_password_hash("password")
-        associates_df = associates_df.drop('password', axis=1)
+        associates_df = associates_df.drop("password", axis=1)
         for _, row in associates_df.iterrows():
             db.add(Users(**row.to_dict()))
 
