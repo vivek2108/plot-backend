@@ -91,3 +91,5 @@ class Users(Base):
     # Relationships
     role = relationship("Roles", back_populates="users")
     designation = relationship("Designations", back_populates="users")
+
+    sales = relationship("Sales", back_populates="user")

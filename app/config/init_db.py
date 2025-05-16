@@ -1,12 +1,17 @@
 import csv
 import os
 
+import pandas as pd
+
 from app.config.database import Base, SessionLocal, engine
 from app.crud.users import get_password_hash
-from app.models.users import Designations, Roles, Users
 from app.models.areas import Areas
+from app.models.buyers import Buyers
 from app.models.images import Images
+from app.models.payments import Payments
 from app.models.plots import Plots
+from app.models.sales import Sales
+from app.models.users import Designations, Roles, Users
 
 
 def read_csv(filepath: str) -> list[dict]:
@@ -14,7 +19,7 @@ def read_csv(filepath: str) -> list[dict]:
     if not os.path.exists(filepath):
         print(f"CSV not found: {filepath}")
         return []
-    with open(filepath, newline='', encoding='utf-8') as f:
+    with open(filepath, newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
@@ -87,5 +92,52 @@ def init() -> None:
         print("DB initialization complete.")
 
 
+def load_csv_to_db():
+    db = SessionLocal()
+    base_path = "app/config/data"
+    try:
+        # Load CSVs
+        plots_df = pd.read_csv(f"{base_path}/plots.csv")
+        associates_df = pd.read_csv(f"{base_path}/users.csv")
+        buyers_df = pd.read_csv(f"{base_path}/buyers.csv")
+        sales_df = pd.read_csv(
+            f"{base_path}/sales.csv", parse_dates=["sale_date", "payment_timeframe"]
+        )
+        payments_df = pd.read_csv(
+            f"{base_path}/payments.csv", parse_dates=["payment_date"]
+        )
+
+        # Insert Plots
+        for _, row in plots_df.iterrows():
+            db.add(Plots(**row.to_dict()))
+
+        # Insert Associates
+        associates_df["hashed_password"] = get_password_hash("password")
+        associates_df = associates_df.drop('password', axis=1)
+        for _, row in associates_df.iterrows():
+            db.add(Users(**row.to_dict()))
+
+        # Insert Buyers
+        for _, row in buyers_df.iterrows():
+            db.add(Buyers(**row.to_dict()))
+
+        # Insert Sales
+        for _, row in sales_df.iterrows():
+            db.add(Sales(**row.to_dict()))
+
+        # Insert Payments
+        for _, row in payments_df.iterrows():
+            db.add(Payments(**row.to_dict()))
+
+        db.commit()
+        print("Database initialized with CSV data.")
+    except Exception as e:
+        db.rollback()
+        print("Error occurred:", e)
+    finally:
+        db.close()
+
+
 if __name__ == "__main__":
     init()
+    load_csv_to_db()

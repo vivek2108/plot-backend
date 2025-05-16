@@ -1,13 +1,14 @@
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, String, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config.database import Base
 from app.models.areas import Areas
 from app.models.images import Images
+
 
 class Plots(Base):
     """
@@ -32,10 +33,11 @@ class Plots(Base):
     __tablename__ = "plots"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    plot_number: Mapped[int] = mapped_column()
+    # plot_number: Mapped[int] = mapped_column()
     area_id: Mapped[int] = mapped_column(Integer, ForeignKey("areas.id"))
     dimensions: Mapped[str | None] = mapped_column(String, nullable=True)
     status: Mapped[str | None] = mapped_column(String, nullable=True)
+    price: Mapped[Decimal] = mapped_column(Numeric(15, 4))
     assigned_to: Mapped[str | None] = mapped_column(String, nullable=True)
     image_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("images.id"))
     svg_path_id: Mapped[str | None] = mapped_column(String, nullable=True)
@@ -48,4 +50,5 @@ class Plots(Base):
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
 
     area = relationship("Areas", back_populates="plots")
-
+    sales = relationship("Sales", back_populates="plot")
+    images = relationship("Images", back_populates="plots")

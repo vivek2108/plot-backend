@@ -1,0 +1,4 @@
+plot_id,associate_id,buyer_id,sale_date,sale_amount,payment_mode,payment_timeframe,created_by,updated_by
+1,2,1,2024-01-15,1000000.0,Bank Transfer,2024-02-15 00:00:00,admin,admin
+3,4,2,2024-03-10,1200000.0,Cash,2024-04-10 00:00:00,admin,admin
+5,3,3,2024-04-05,1300000.0,Cheque,2024-05-05 00:00:00,admin,admin

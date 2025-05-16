@@ -1,0 +1,6 @@
+area_id,dimensions,price,status
+1,110*134,1000000.0,sold
+2,110*234,1500000.0,available
+3,130*134,1200000.0,sold
+4,120*134,1100000.0,available
+5,110*174,1300000.0,sold

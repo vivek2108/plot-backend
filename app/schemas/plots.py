@@ -1,8 +1,9 @@
+import logging
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Dict, Optional
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
-import logging
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -23,28 +24,18 @@ class PlotBase(BaseModel):
         ocr_data (Optional[Dict]): OCR data extracted from image.
     """
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        from_attributes=True
-    )
+    model_config = ConfigDict(populate_by_name=True, from_attributes=True)
 
-    plot_number: int = Field(..., description="Unique number identifying the plot")
     area_id: int = Field(..., description="ID of the area the plot is located in")
     dimensions: Optional[str] = Field(None, description="Dimensions of the plot")
     status: Optional[str] = Field(None, description="Status of the plot")
+    price: Decimal
     assigned_to: Optional[str] = Field(None, description="Assigned person or entity")
     image_id: Optional[int] = Field(None, description="Associated image ID")
-    svg_path_id: Optional[str] = Field(None, description="Path to the SVG representation")
+    svg_path_id: Optional[str] = Field(
+        None, description="Path to the SVG representation"
+    )
     ocr_data: Optional[Dict] = Field(None, description="OCR data in JSON format")
-
-
-class PlotCreate(PlotBase):
-    """
-    Schema for creating a new plot.
-
-    Inherits all fields from PlotBase.
-    """
-    pass
 
 
 class PlotUpdate(BaseModel):
@@ -52,16 +43,17 @@ class PlotUpdate(BaseModel):
     Schema for updating an existing plot.
 
     """
-    model_config = ConfigDict(
-        populate_by_name=True,
-        from_attributes=True
-    )
-    
+
+    model_config = ConfigDict(populate_by_name=True, from_attributes=True)
+
+    price: Decimal
     dimensions: Optional[str] = Field(None, description="Dimensions of the plot")
     status: Optional[str] = Field(None, description="Status of the plot")
     assigned_to: Optional[str] = Field(None, description="Assigned person or entity")
     image_id: Optional[int] = Field(None, description="Associated image ID")
-    svg_path_id: Optional[str] = Field(None, description="Path to the SVG representation")
+    svg_path_id: Optional[str] = Field(
+        None, description="Path to the SVG representation"
+    )
     ocr_data: Optional[Dict] = Field(None, description="OCR data in JSON format")
 
 
@@ -76,13 +68,21 @@ class Plot(PlotBase):
         created_by (Optional[str]): User who created the record.
         updated_by (Optional[str]): User who last updated the record.
     """
+
     id: int = Field(..., description="Unique plot ID")
-    create_dt: datetime = Field(..., alias="createDate", description="Creation timestamp")
-    update_dt: datetime = Field(..., alias="updateDate", description="Last update timestamp")
-    created_by: Optional[str] = Field(None, alias="createdBy", description="Creator of the plot")
-    updated_by: Optional[str] = Field(None, alias="updatedBy", description="Last user to update the plot")
+    create_dt: datetime = Field(
+        ..., alias="createDate", description="Creation timestamp"
+    )
+    update_dt: datetime = Field(
+        ..., alias="updateDate", description="Last update timestamp"
+    )
+    created_by: Optional[str] = Field(
+        None, alias="createdBy", description="Creator of the plot"
+    )
+    updated_by: Optional[str] = Field(
+        None, alias="updatedBy", description="Last user to update the plot"
+    )
 
     class Config:
-        orm_mode = True
         populate_by_name = True
         from_attributes = True

@@ -1,18 +1,21 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.config.database import get_db
+
 from app.auth.auth import get_current_user, require_role
-from app.schemas.plots import PlotCreate, PlotUpdate, Plot
-from app.crud.plots import create_plot, get_plot, get_all_plots, update_plot, delete_plot
 from app.auth.currentuser import CurrentUser
+from app.config.database import get_db
+from app.crud.plots import (create_plot, delete_plot, get_all_plots, get_plot,
+                            update_plot)
+from app.schemas.plots import Plot, PlotBase, PlotUpdate
 
 router = APIRouter()
 
 
 @router.post("/", response_model=Plot, status_code=status.HTTP_201_CREATED)
 def create(
-    plot_data: PlotCreate,
+    plot_data: PlotBase,
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ):
@@ -21,7 +24,7 @@ def create(
     Accessible by authorized users (admin, manager).
 
     Args:
-        plot_data (PlotCreate): Data for the new plot.
+        plot_data (PlotBase): Data for the new plot.
         db (Session): Database session.
         current_user (CurrentUser): Authenticated user.
 
@@ -36,7 +39,7 @@ def create(
 def get(
     plot_id: int,
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user),
 ):
     """
     Retrieve details of a specific plot by ID.
@@ -58,10 +61,10 @@ def get(
 
 @router.get("/", response_model=List[Plot])
 def get_all(
+    db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 10,
-    db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user),
 ):
     """
     Get a list of all plots with pagination.

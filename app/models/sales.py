@@ -31,7 +31,7 @@ class Sales(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     plot_id: Mapped[int] = mapped_column(Integer, ForeignKey("plots.id"))
-    associate_id: Mapped[int] = mapped_column(Integer, ForeignKey("associates.id"))
+    associate_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     buyer_id: Mapped[int] = mapped_column(Integer, ForeignKey("buyers.id"))
     sale_amount: Mapped[Decimal] = mapped_column(Numeric(15, 2))
     payment_mode: Mapped[str | None] = mapped_column(String, nullable=True)
@@ -45,6 +45,7 @@ class Sales(Base):
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # Relationships
-    plot = relationship("Plots", back_populates="sales", cascade="all, delete-orphan")
-    associate = relationship("Associates", back_populates="sales")
+    plot = relationship("Plots", back_populates="sales")
+    user = relationship("Users", back_populates="sales")
     buyer = relationship("Buyers", back_populates="sales")
+    payments = relationship("Payments", back_populates="sale")

@@ -42,7 +42,7 @@ def get_buyer(db: Session, buyer_id: int) -> BuyersModel | None:
     """
     return (
         db.query(BuyersModel)
-        .filter(BuyersModel.id == buyer_id, BuyersModel.deleted_at == None)
+        .filter(BuyersModel.id == buyer_id, BuyersModel.is_deleted == False)
         .first()
     )
 
@@ -63,7 +63,7 @@ def get_all_buyers(
         list[BuyersModel]: List of buyers with applied filters and pagination.
     """
     query = db.query(BuyersModel).filter(
-        BuyersModel.deleted_at == None
+        BuyersModel.is_deleted == False
     )  # Exclude soft-deleted records
 
     # Apply filters if provided
@@ -94,7 +94,7 @@ def update_buyer(
     Returns:
         BuyersModel | None: Updated buyer or None if not found.
     """
-    buyer = db.query(BuyersModel).filter(BuyersModel.id == buyer_id).first()
+    buyer = get_buyer(db, buyer_id)
     if not buyer:
         return None
 
@@ -127,11 +127,11 @@ def soft_delete_buyer(
     Returns:
         BuyersModel | None: The deleted buyer, or None if not found.
     """
-    buyer = db.query(BuyersModel).filter(BuyersModel.id == buyer_id).first()
+    buyer = get_buyer(db, buyer_id)
     if not buyer:
         return None
 
-    buyer.deleted_at = func.now()  # Set the deletion timestamp
+    buyer.is_deleted = True
     buyer.updated_by = current_user.username
     db.commit()
     db.refresh(buyer)

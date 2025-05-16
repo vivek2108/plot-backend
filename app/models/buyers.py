@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, DateTime, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config.database import Base
 
@@ -30,10 +30,12 @@ class Buyers(Base):
     contact: Mapped[str | None] = mapped_column(String, nullable=True)
     address: Mapped[str | None] = mapped_column(String, nullable=True)
     id_proof_path: Mapped[str | None] = mapped_column(String, nullable=True)
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)  # Soft delete flag
     create_dt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     update_dt: Mapped[datetime] = mapped_column(
         DateTime, default=func.now(), onupdate=func.now()
     )
     created_by: Mapped[str | None] = mapped_column(String, nullable=True)
     updated_by: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    sales = relationship("Sales", back_populates="buyer")

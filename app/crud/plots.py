@@ -1,21 +1,22 @@
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
-from typing import Optional, List
+from typing import List, Optional
 
-from app.models.plots import Plots
-from app.schemas.plots import PlotCreate, PlotUpdate
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
 from app.core.logger import get_logger
+from app.models.plots import Plots as PlotsModel
+from app.schemas.plots import PlotBase, PlotUpdate
 
 logger = get_logger(__name__)
 
 
-def create_plot(db: Session, plot_data: PlotCreate, user: str) -> Plots:
+def create_plot(db: Session, plot_data: PlotBase, user: str) -> PlotsModel:
     """
     Create a new plot record in the database.
 
     Args:
         db (Session): SQLAlchemy database session.
-        plot_data (PlotCreate): Plot data from request.
+        plot_data (PlotBase): Plot data from request.
         user (str): Username of the creator.
 
     Returns:
@@ -26,18 +27,19 @@ def create_plot(db: Session, plot_data: PlotCreate, user: str) -> Plots:
         new_plot["created_by"] = user
         new_plot["updated_by"] = user
 
-        db.add(new_plot)
+        db_plot = PlotsModel(**new_plot)
+        db.add(db_plot)
         db.commit()
-        db.refresh(new_plot)
-        logger.info(f"Plot created successfully by {user}: ID {new_plot.id}")
-        return new_plot
+        db.refresh(db_plot)
+        logger.info(f"Plot created successfully by {user}: ID {db_plot.id}")
+        return db_plot
     except SQLAlchemyError as e:
         db.rollback()
         logger.error(f"Error creating plot: {e}")
         raise
 
 
-def get_plot(db: Session, plot_id: int) -> Optional[Plots]:
+def get_plot(db: Session, plot_id: int) -> Optional[PlotsModel]:
     """
     Retrieve a plot by its ID.
 
@@ -49,10 +51,10 @@ def get_plot(db: Session, plot_id: int) -> Optional[Plots]:
         Optional[Plots]: Plot instance if found, else None.
     """
     logger.debug(f"Fetching plot with ID: {plot_id}")
-    return db.query(Plots).filter(Plots.id == plot_id).first()
+    return db.query(PlotsModel).filter(PlotsModel.id == plot_id).first()
 
 
-def get_all_plots(db: Session, skip: int = 0, limit: int = 10) -> List[Plots]:
+def get_all_plots(db: Session, skip: int = 0, limit: int = 10) -> List[PlotsModel]:
     """
     Retrieve all plots with pagination.
 
@@ -65,10 +67,12 @@ def get_all_plots(db: Session, skip: int = 0, limit: int = 10) -> List[Plots]:
         List[Plots]: List of plot records.
     """
     logger.debug(f"Fetching plots: skip={skip}, limit={limit}")
-    return db.query(Plots).offset(skip).limit(limit).all()
+    return db.query(PlotsModel).offset(skip).limit(limit).all()
 
 
-def update_plot(db: Session, plot_id: int, plot_data: PlotUpdate, user: str) -> Optional[Plots]:
+def update_plot(
+    db: Session, plot_id: int, plot_data: PlotUpdate, user: str
+) -> Optional[PlotsModel]:
     """
     Update an existing plot record.
 
@@ -81,7 +85,7 @@ def update_plot(db: Session, plot_id: int, plot_data: PlotUpdate, user: str) -> 
     Returns:
         Optional[Plots]: Updated plot if found and updated, else None.
     """
-    plot = db.query(Plots).filter(Plots.id == plot_id).first()
+    plot = get_plot(db, plot_id)
     if not plot:
         logger.warning(f"Plot ID {plot_id} not found for update by {user}")
         return None
@@ -115,7 +119,7 @@ def delete_plot(db: Session, plot_id: int, user: str) -> bool:
     Returns:
         bool: True if deleted, False if not found.
     """
-    plot = db.query(Plots).filter(Plots.id == plot_id).first()
+    plot = get_plot(db, plot_id)
     if plot:
         db.delete(plot)
         db.commit()

@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from app.auth.auth import get_current_user, require_role
 from app.auth.currentuser import CurrentUser
 from app.config.database import get_db
+from app.core.logger import get_logger
 from app.crud.buyers import (create_buyer, get_all_buyers, get_buyer,
                              soft_delete_buyer, update_buyer)
 from app.schemas.buyers import Buyers, BuyersBase
-from app.core.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -26,7 +26,7 @@ def fetch_all(
     db: Session = Depends(get_db),
     skip: int = 0,  # Pagination
     limit: int = 10,  # Pagination
-    filters: dict = {},  # Optional filters
+    # filters: dict = {},  # Optional filters
     current_user: CurrentUser = Depends(require_role(["admin", "manager"])),
 ) -> List[Buyers]:
     """
@@ -42,7 +42,7 @@ def fetch_all(
     """
     logger.info("Fetching all buyers")
 
-    return get_all_buyers(db, skip=skip, limit=limit, filters=filters)
+    return get_all_buyers(db, skip=skip, limit=limit)
 
 
 @router.get(
@@ -129,7 +129,7 @@ def update(
 
 @router.delete(
     "/{id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=Buyers,
     summary="Soft delete a buyer",
     description="Soft deletes a buyer record by ID. Authenticated access required.",
 )

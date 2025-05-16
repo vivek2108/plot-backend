@@ -1,8 +1,8 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import Date, Numeric, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, Date, ForeignKey, Integer, Numeric, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config.database import Base
 
@@ -23,8 +23,11 @@ class Payments(Base):
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    sale_id: Mapped[int] = mapped_column()
+    sale_id: Mapped[int] = mapped_column(Integer, ForeignKey("sales.id"))
     amount_paid: Mapped[Decimal] = mapped_column(Numeric(15, 4))
     payment_date: Mapped[date] = mapped_column(Date)
     payment_mode: Mapped[str | None] = mapped_column(String, nullable=True)
     remaining_balance: Mapped[Decimal] = mapped_column(Numeric(15, 4))
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)  # Soft delete flag
+
+    sale = relationship("Sales", back_populates="payments")

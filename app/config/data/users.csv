@@ -1,0 +1,4 @@
+username,full_name,email,password,designation_id,role_id
+ravi,Ravi Kumar,rk@plots.com,rk123,6,3
+sneha,Sneha Mehta,sm@plots.com,sm123,6,3
+amit,Amit Singh,as@plots.com.as123,as123,5,3

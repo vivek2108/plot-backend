@@ -7,3 +7,5 @@ bcrypt
 python-dotenv
 pydantic
 PyJWT
+requests
+pandas

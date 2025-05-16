@@ -54,6 +54,7 @@ class Buyers(BuyersBase):
     """
 
     id: int = Field(..., description="Unique identifier for the buyer.")
+    is_deleted: bool = Field()
     created_by: Optional[str] = Field(
         None,
         alias="createdBy",
